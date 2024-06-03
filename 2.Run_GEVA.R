@@ -1,5 +1,5 @@
-# Trans species polymorphism - trees
-# 2.28.2023
+# Age of SNPs - summarizing estimates from GEVA output
+# 6.3.2024
 # module load goolf/7.1.0_3.1.4 R/4.0.3; module load gdal geos proj; R
 
 # Libraries
@@ -42,6 +42,7 @@ ds2 <- data.table(ds1 %>%
                       n=n()) %>% 
             mutate(se=sd/sqrt(n)))
 
+# Get summary stats
 ds2 %>% 
   ggplot(.) +
   geom_pointrange(aes(x=classified1, 
@@ -51,7 +52,7 @@ ds2 %>%
                       color=classified1)) +
   facet_wrap(~Set, nrow = 1)
 
-# Plot cpd_wb  distance output
+# Plot age estimates
 plot <- {
   
   ds1 %>% 
@@ -79,16 +80,17 @@ plot <- {
   
 }
 
+# Save output
 ggsave("candgene/geva.euro.nam.tmrca.pdf", plot)
 
-# Stats
+# Testing differences between shared polymorphisms and control SNPs
 t.test(ds1[classified1=="TSP"][simpleAnnot=="NS"][!Set %like% "nam"]$PMean,
        ds1[classified1=="Not TSP"][simpleAnnot=="NS"][!Set %like% "nam"]$PMean)
 
 t.test(ds1[classified1=="TSP"][simpleAnnot=="NS"][!Set %like% "nam"]$PMean,
        ds1[classified1=="Not TSP"][simpleAnnot=="NS"][!Set %like% "nam"]$PMean)
 
-# Add intervals
+# Add intervals - average of BP windows
 upp=10
 dt2 <- data.table(ds1[gene.x==gene.y] %>% 
                     #group_by(.id, SNP_A) %>% 
